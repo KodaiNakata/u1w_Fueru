@@ -2,7 +2,8 @@
 Unity1weekのお題「ふえる」の制作リポジトリです。
 
 # 制作環境
-Unity 2019.1.2f1 (64-bit)
+- Unity 2019.1.2f1 (64-bit)
+- Visual Studio 2019
 
 # ジャンル
 - 2D
