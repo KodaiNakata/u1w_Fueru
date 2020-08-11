@@ -64,7 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\GameScene\Script\BulletController.cs" />
-    <Compile Include="Assets\GameScene\Script\BulletGenerator.cs" />
+    <Compile Include="Assets\GameScene\Script\BulletManager.cs" />
     <Compile Include="Assets\GameScene\Script\GameSceneDirector.cs" />
     <Compile Include="Assets\GameScene\Script\PlayerController.cs" />
     <Reference Include="Unity.Timeline.Editor">

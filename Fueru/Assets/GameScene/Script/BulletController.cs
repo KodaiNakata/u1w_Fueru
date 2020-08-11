@@ -20,13 +20,13 @@ public class BulletController : MonoBehaviour
     //! 移動の速さ
     private const float MOVE_SPEED = 1f;
     //! x座標の最小値
-    private const float MIN_POS_X = -2f;
+    private const int MIN_POS_X = -2;
     //! x座標の最大値
-    private const float MAX_POS_X = 22f;
+    private const int MAX_POS_X = 22;
     //! y座標の最小値
-    private const float MIN_POS_Y = -1f;
+    private const int MIN_POS_Y = -1;
     //! y座標の最大値
-    private const float MAX_POS_Y = 11f;
+    private const int MAX_POS_Y = 11;
     /**
      * @brief 最初のフレームに入る前に呼び出される関数
      */
@@ -36,6 +36,7 @@ public class BulletController : MonoBehaviour
         Vector2 startPos = GetRandomPos();// 始点位置をランダムで取得する
         Vector2 finishPos = GetRandomPos(startPos);// 終点位置ランダムで取得する
         shotForward = Vector2.Scale((finishPos - startPos), new Vector2(1, 1)).normalized;// 向きの生成
+        BulletManager.GetInstance().AddBulletPosList(startPos);// 弾の始点位置のリストに追加
         transform.position = startPos;// 始点の位置を反映
     }
 
@@ -46,8 +47,8 @@ public class BulletController : MonoBehaviour
     private Vector2 GetRandomPos()
     {
         int random = Random.Range(0, 1);// x座標から決めるかy座標から決めるか
-        float randomPosX = 0f;// ランダムのx座標
-        float randomPosY = 0f;// ランダムのy座標
+        int randomPosX = 0;// ランダムのx座標
+        int randomPosY = 0;// ランダムのy座標
 
         // x座標から決めるとき
         if (random == 0)
@@ -57,15 +58,7 @@ public class BulletController : MonoBehaviour
             // ランダムで取得したx座標が左端と右端を除いた位置のとき
             if (MIN_POS_X < randomPosX && randomPosX < MAX_POS_X)
             {
-                int randomBoth = Random.Range(0, 1);// 両端のどちらかを決める
-                if (randomBoth == 0)
-                {
-                    randomPosY = MIN_POS_Y;// 下端にする
-                }
-                else
-                {
-                    randomPosY = MAX_POS_Y;// 上端にする
-                }
+                randomPosY = BulletManager.GetInstance().GetStartRandomPosY(MIN_POS_Y, MAX_POS_Y);// 両端のどちらかをランダムで決める
             }
             // ランダムで取得したx座標が左端または右端のとき
             else
@@ -81,15 +74,7 @@ public class BulletController : MonoBehaviour
             // ランダムで取得したy座標が下端と上端を除いた位置のとき
             if (MIN_POS_Y < randomPosY && randomPosY < MAX_POS_Y)
             {
-                int randomBoth = Random.Range(0, 1);// 両端のどちらかを決める
-                if (randomBoth == 0)
-                {
-                    randomPosX = MIN_POS_X;// 左端にする
-                }
-                else
-                {
-                    randomPosX = MAX_POS_X;// 右端にする
-                }
+                randomPosX = BulletManager.GetInstance().GetStartRandomPosX(MIN_POS_X, MAX_POS_X);// 両端のどちらかをランダムで決める
             }
             // ランダムで取得したy座標が下端または上端のとき
             else
@@ -107,10 +92,10 @@ public class BulletController : MonoBehaviour
      */
     private Vector2 GetRandomPos(Vector2 startPos)
     {
-        float randomPosX = 0f;
-        float randomPosY = 0f;
-        float centerX = (MAX_POS_X - MIN_POS_X) / 2f;
-        float centerY = (MAX_POS_Y - MIN_POS_Y) / 2f;
+        float randomPosX = 0;
+        float randomPosY = 0;
+        int centerX = (MAX_POS_X - MIN_POS_X) / 2;
+        int centerY = (MAX_POS_Y - MIN_POS_Y) / 2;
 
         // 始点の位置が左端のとき
         if (startPos.x == MIN_POS_X)
@@ -133,9 +118,10 @@ public class BulletController : MonoBehaviour
             // ランダムで取得したx座標が右端のとき
             else
             {
-                do {
+                do
+                {
                     randomPosY = Random.Range(MIN_POS_Y, MAX_POS_Y);// y座標をランダム取得
-                } while (Mathf.Abs(startPos.y - randomPosY) < 1f);// 始点のy座標と終点のy座標の差が1未満のとき
+                } while (Mathf.Abs(startPos.y - randomPosY) < 3f);// 始点のy座標と終点のy座標の差が3未満のとき
             }
         }
         // 始点の位置が右端のとき
@@ -159,9 +145,10 @@ public class BulletController : MonoBehaviour
             // ランダムで取得したx座標が左端のとき
             else
             {
-                do {
+                do
+                {
                     randomPosY = Random.Range(MIN_POS_Y, MAX_POS_Y);// y座標をランダム取得
-                } while (Mathf.Abs(startPos.y - randomPosY) < 1f) ;// 始点のy座標と終点のy座標の差が1未満のとき
+                } while (Mathf.Abs(startPos.y - randomPosY) < 3f) ;// 始点のy座標と終点のy座標の差が3未満のとき
             }
         }
         // 始点の位置が下端のとき
@@ -185,9 +172,10 @@ public class BulletController : MonoBehaviour
             // ランダムで取得したy座標が上端のとき
             else
             {
-                do {
+                do
+                {
                     randomPosX = Random.Range(MIN_POS_X, MAX_POS_X);// x座標をランダム取得
-                } while (Mathf.Abs(startPos.x - randomPosX) < 1f);// 始点のx座標と終点のx座標の差が1未満のとき
+                } while (Mathf.Abs(startPos.x - randomPosX) < 3f);// 始点のx座標と終点のx座標の差が3未満のとき
             }
         }
         // 始点の位置が上端のとき
@@ -211,9 +199,10 @@ public class BulletController : MonoBehaviour
             // ランダムで取得したy座標が下端のとき
             else
             {
-                do {
+                do
+                {
                     randomPosX = Random.Range(MIN_POS_X, MAX_POS_X);// x座標をランダム取得
-                } while (Mathf.Abs(startPos.x - randomPosX) < 1f);// 始点のx座標と終点のx座標の差が1未満のとき
+                } while (Mathf.Abs(startPos.x - randomPosX) < 3f);// 始点のx座標と終点のx座標の差が3未満のとき
             }
         }
         return new Vector2(randomPosX, randomPosY);
@@ -224,7 +213,15 @@ public class BulletController : MonoBehaviour
      */
     void Update()
     {
-        MovePos();// 座標を移動
+        // ステージ内のとき
+        if (OnStage())
+        {
+            MovePos();// 座標を移動
+        }
+        else
+        {
+            Destroy(bulletObject);// ステージ外の弾は破棄
+        }
     }
 
     /**
@@ -233,5 +230,27 @@ public class BulletController : MonoBehaviour
     private void MovePos()
     {
         bulletObject.GetComponent<Rigidbody2D>().velocity = shotForward * MOVE_SPEED;
+    }
+
+    /**
+     * @brief ステージ内か
+     * @return true ステージ内
+     *         false ステージ外
+     */
+    private bool OnStage()
+    {
+        Vector2 pos = bulletObject.transform.position;// 現在の弾の位置を取得
+
+        // x座標がステージ外にあるとき
+        if (pos.x < MIN_POS_X || MAX_POS_X < pos.x)
+        {
+            return false;// ステージ外
+        }
+        // y座標がステージ外にあるとき
+        else if (pos.y < MIN_POS_Y || MAX_POS_Y < pos.y)
+        {
+            return false;// ステージ外
+        }
+        return true;// ステージ内
     }
 }
