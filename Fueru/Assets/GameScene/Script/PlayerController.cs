@@ -23,6 +23,8 @@ public class PlayerController : MonoBehaviour
     private float maxPosX;
     //! y座標の最大値
     private float maxPosY;
+    //! 自クラスのインスタンス
+    private static PlayerController instance;
     /**
      * @brief 最初のフレームに入る前に呼び出される関数
      */
@@ -33,20 +35,22 @@ public class PlayerController : MonoBehaviour
         minPosY = 1f;
         maxPosX = 20f;
         maxPosY = 9f;
+        instance = GetComponent<PlayerController>();
     }
 
     /**
-     * @briref 1フレームごとに呼び出される関数
+     * @brief 自クラスのインスタンスを取得する
+     * @return インスタンス
      */
-    void Update()
+    public static PlayerController GetInstance()
     {
-        MovePos();// 座標を移動
+        return instance;
     }
 
     /**
      * @brief 座標を移動する
      */
-    private void MovePos()
+    public void MovePos()
     {
         // マウスの左クリックを押している間
         if (Input.GetMouseButton(0)) {
@@ -78,13 +82,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
     /**
-        * @brief 2Dオブジェクトの侵入を検出する
-        * @param other 侵入したオブジェクト
-        */
+     * @brief 2Dオブジェクトの侵入を検出する
+     * @param[in] other 侵入したオブジェクト
+     */
     void OnTriggerEnter2D(Collider2D other)
     {
-        //@todo 弾と衝突したらゲームオーバーかつ時間の結果を表示させる
+        GameSceneDirector.GetInstance().ChangeStatus(GameSceneDirector.GameStatus.GAME_OVER);// ゲームオーバー状態にする
     }
 }
