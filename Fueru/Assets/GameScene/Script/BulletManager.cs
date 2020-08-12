@@ -40,10 +40,11 @@ public class BulletManager : MonoBehaviour
     void Update()
     {
         timeCount += Time.deltaTime;
+        // タイマーが一定期間を超えたとき
         if (timeSpan < timeCount)
         {
-            CreateBullet();
-            timeCount = 0f;
+            CreateBullet();// 弾を生成する
+            timeCount = 0f;// タイマーをリセットする
         }
     }
 
@@ -81,36 +82,6 @@ public class BulletManager : MonoBehaviour
     {
         List<Vector2> tmpList = bulletStartPosList;
         bulletStartPosList.Remove(pos);
-    }
-
-    /**
-     * @brief 弾の位置のリストの中で重複があるか
-     * @param[out] posX 弾のx座標
-     * @param[out] posY 弾のy座標
-     * @return true 重複あり
-     *         false 重複なし
-     */
-    public bool IsDuplication(float posX, float posY)
-    {
-        int count = 0;
-        foreach(Vector2 vector2 in bulletStartPosList)
-        {
-            // 同じx座標のとき
-            if (posX == vector2.x)
-            {
-                count++;// カウントする
-            }
-            else if (posY == vector2.y)
-            {
-                count++;
-            }
-        }
-        // 3個以上重複していたとき
-        if (3 <= count)
-        {
-            return true;// 重複あり
-        }
-        return false;
     }
 
     /**

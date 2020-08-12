@@ -27,13 +27,15 @@ public class BulletController : MonoBehaviour
     private const int MIN_POS_Y = -1;
     //! y座標の最大値
     private const int MAX_POS_Y = 11;
+    //! 始点の位置
+    private Vector2 startPos;
     /**
      * @brief 最初のフレームに入る前に呼び出される関数
      */
     void Start()
     {
         bulletObject = this.gameObject;// 自身のオブジェクトを取得
-        Vector2 startPos = GetRandomPos();// 始点位置をランダムで取得する
+        startPos = GetRandomPos();// 始点位置をランダムで取得する
         Vector2 finishPos = GetRandomPos(startPos);// 終点位置ランダムで取得する
         shotForward = Vector2.Scale((finishPos - startPos), new Vector2(1, 1)).normalized;// 向きの生成
         BulletManager.GetInstance().AddBulletPosList(startPos);// 弾の始点位置のリストに追加
@@ -46,14 +48,14 @@ public class BulletController : MonoBehaviour
      */
     private Vector2 GetRandomPos()
     {
-        int random = Random.Range(0, 1);// x座標から決めるかy座標から決めるか
+        int random = Random.Range(0, 2);// x座標から決めるかy座標から決めるか
         int randomPosX = 0;// ランダムのx座標
         int randomPosY = 0;// ランダムのy座標
 
         // x座標から決めるとき
         if (random == 0)
         {
-            randomPosX = Random.Range(MIN_POS_X, MAX_POS_X);// x座標をランダム取得
+            randomPosX = Random.Range(MIN_POS_X, MAX_POS_X + 1);// x座標をランダム取得
 
             // ランダムで取得したx座標が左端と右端を除いた位置のとき
             if (MIN_POS_X < randomPosX && randomPosX < MAX_POS_X)
@@ -63,13 +65,13 @@ public class BulletController : MonoBehaviour
             // ランダムで取得したx座標が左端または右端のとき
             else
             {
-                randomPosY = Random.Range(MIN_POS_Y, MAX_POS_Y);// y座標をランダム取得
+                randomPosY = Random.Range(MIN_POS_Y, MAX_POS_Y + 1);// y座標をランダム取得
             }
         }
         // y座標から決めるとき
         else
         {
-            randomPosY = Random.Range(MIN_POS_Y, MAX_POS_Y);// y座標をランダム取得
+            randomPosY = Random.Range(MIN_POS_Y, MAX_POS_Y + 1);// y座標をランダム取得
 
             // ランダムで取得したy座標が下端と上端を除いた位置のとき
             if (MIN_POS_Y < randomPosY && randomPosY < MAX_POS_Y)
@@ -79,7 +81,7 @@ public class BulletController : MonoBehaviour
             // ランダムで取得したy座標が下端または上端のとき
             else
             {
-                randomPosX = Random.Range(MIN_POS_X, MAX_POS_X);// x座標をランダム取得
+                randomPosX = Random.Range(MIN_POS_X, MAX_POS_X + 1);// x座標をランダム取得
             }
         }
         return new Vector2(randomPosX, randomPosY);
@@ -217,10 +219,17 @@ public class BulletController : MonoBehaviour
         if (OnStage())
         {
             MovePos();// 座標を移動
+            // プレイ状態から変化したとき
+            if (ChangedGameStatus())
+            {
+                Destroy(bulletObject);// ステージ内の弾を破棄
+            }
         }
+        // ステージ外のとき
         else
         {
-            Destroy(bulletObject);// ステージ外の弾は破棄
+            BulletManager.GetInstance().RemoveAddBulletPosList(startPos);// 弾の始点位置のリストから削除
+            Destroy(bulletObject);// ステージ外の弾を破棄
         }
     }
 
@@ -230,6 +239,22 @@ public class BulletController : MonoBehaviour
     private void MovePos()
     {
         bulletObject.GetComponent<Rigidbody2D>().velocity = shotForward * MOVE_SPEED;
+    }
+
+    /**
+     * @brief プレイ状態から状態が変化したか
+     * @return true 変化あり
+     *         false 変化なし
+     */
+    private bool ChangedGameStatus()
+    {
+        GameSceneDirector.GameStatus status = GameSceneDirector.GetInstance().GetCurrentStatus();
+        // スタート状態またはゲームオーバー状態のとき
+        if (status == GameSceneDirector.GameStatus.START || status == GameSceneDirector.GameStatus.GAME_OVER)
+        {
+            return true;// 変化あり
+        }
+        return false;// 変化なし
     }
 
     /**
