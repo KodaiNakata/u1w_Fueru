@@ -58,11 +58,29 @@ public class TimerManager : MonoBehaviour
     }
 
     /**
-     * @brief 時間の結果を取得する
-     * @return 時間の結果
+     * @brief 時を取得する
+     * @return 時
      */
-    public string GetResultOfTime()
+    public int GetHour()
     {
-        return hour.ToString("00") + ":" + minute.ToString("00") + ":" + ((int)second).ToString("00");
+        return hour;
+    }
+
+    /**
+     * @brief 分を取得する
+     * @return 分
+     */
+    public int GetMinute()
+    {
+        return minute;
+    }
+
+    /**
+     * @brief 秒を取得する
+     * @return 秒
+     */
+    public float GetSecond()
+    {
+        return second;
     }
 }
