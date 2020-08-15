@@ -14,3 +14,7 @@ Fueru/Temp/UnityTempFile-ad939185df5ee47409472f1991e5c05c
 Fueru/Temp/
 Fueru/Library/metadata/4c/4cc6bedbb4d8374488952beccf111378
 Fueru/Library/metadata/4c/4cc6bedbb4d8374488952beccf111378.info
+Fueru/Library/il2cpp_cache/
+*.log
+Fueru/Library/ShaderCache/
+Fueru/Library/webgl_cache/
