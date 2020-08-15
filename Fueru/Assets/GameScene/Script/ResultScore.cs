@@ -26,6 +26,7 @@ public class ResultScore : MonoBehaviour
         int score = ScoreManager.GetInstance().GetScore();// スコア管理から取得する
         GameObject returnObject = GameObject.Find("Return");// 戻るオブジェクトを取得
         Animator returnAnim = returnObject.GetComponent<Animator>();// 戻るのアニメーションを取得
+        returnAnim.Play("Transparent");// 透明のアニメーションを再生
         Sequence sequence = DOTween.Sequence();
         sequence
             .AppendInterval(1f) // 各アニメーション間の待機
