@@ -16,11 +16,11 @@ public class PlayerController : MonoBehaviour
     //! プレイヤーの位置
     private Vector3 playerPos;
     //! x座標の最小値
-    private const float MIN_POS_X = 0f;
+    private const float MIN_POS_X = 3.5f;
     //! y座標の最小値
     private const float MIN_POS_Y = 1.5f;
     //! x座標の最大値
-    private const float MAX_POS_X = 19.5f;
+    private const float MAX_POS_X = 16.0f;
     //! y座標の最大値
     private const float MAX_POS_Y = 7.5f;
     //! 自クラスのインスタンス
