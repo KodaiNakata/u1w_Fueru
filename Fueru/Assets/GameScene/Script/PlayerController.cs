@@ -16,26 +16,42 @@ public class PlayerController : MonoBehaviour
     //! プレイヤーの位置
     private Vector3 playerPos;
     //! x座標の最小値
-    private float minPosX;
+    private const float MIN_POS_X = 0f;
     //! y座標の最小値
-    private float minPosY;
+    private const float MIN_POS_Y = 1.5f;
     //! x座標の最大値
-    private float maxPosX;
+    private const float MAX_POS_X = 19.5f;
     //! y座標の最大値
-    private float maxPosY;
+    private const float MAX_POS_Y = 7.5f;
     //! 自クラスのインスタンス
     private static PlayerController instance;
+    //! 捕まれたか
+    private bool isCaught;
+    //! アニメーション
+    private Animator animator;
+    //! 弾に当たったか
+    private bool isHit;
+    //! 当たるアニメーションが開始されたか
+    private bool startedHitAnim;
+
     /**
      * @brief 最初のフレームに入る前に呼び出される関数
      */
     void Start()
     {
-        playerPos = default;
-        minPosX = 0f;
-        minPosY = 1f;
-        maxPosX = 20f;
-        maxPosY = 9f;
         instance = GetComponent<PlayerController>();
+        animator = GetComponent<Animator>();
+    }
+
+    /**
+     * @brief オブジェクトを有効にした直後に呼び出される関数
+     */
+    void OnEnable()
+    {
+        playerPos = default;
+        isCaught = false;
+        isHit = false;
+        startedHitAnim = false;
     }
 
     /**
@@ -48,38 +64,19 @@ public class PlayerController : MonoBehaviour
     }
 
     /**
-     * @brief 座標を移動する
+     * @brief プレイヤー上で左クリックが押されたときに呼び出される関数
      */
-    public void MovePos()
+    void OnMouseDown()
     {
-        // マウスの左クリックを押している間
-        if (Input.GetMouseButton(0)) {
-            playerPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);// マウスの位置を取得
-            playerPos = Camera.main.ScreenToWorldPoint(playerPos);// スクリーン座標をワールド座標に変換
-            playerPos.z = 0f;// カメラのz座標が-10のため、プレイヤーのz座標を0にする
+        isCaught = true;
+    }
 
-            // x座標で動ける範囲外(最大値より大きい)のとき
-            if (maxPosX < playerPos.x)
-            {
-                playerPos.x = maxPosX;// ステージ内に収める
-            }
-            // x座標で動ける範囲外(最小値より小さい)のとき
-            else if (playerPos.x < minPosX)
-            {
-                playerPos.x = minPosX;// ステージ内に収める
-            }
-            // y座標で動ける範囲外(最大値より大きい)のとき
-            if (maxPosY < playerPos.y)
-            {
-                playerPos.y = maxPosY;// ステージ内に収める
-            }
-            // y座標で動ける範囲外(最小値より小さい)のとき
-            else if (playerPos.y < minPosY)
-            {
-                playerPos.y = minPosY;// ステージ内に収める
-            }
-            transform.position = playerPos;// ゲーム画面に反映
-        }
+    /**
+     * @brief 左クリックが離れたときに呼び出される関数
+     */
+    void OnMouseUp()
+    {
+        isCaught = false;
     }
 
     /**
@@ -88,6 +85,109 @@ public class PlayerController : MonoBehaviour
      */
     void OnTriggerEnter2D(Collider2D other)
     {
-        GameSceneDirector.GetInstance().ChangeStatus(GameSceneDirector.GameStatus.GAME_OVER);// ゲームオーバー状態にする
+        isCaught = false;
+        isHit = true;
+        animator.SetBool("isHit", isHit);
+    }
+
+    /**
+     * @brief 操作する
+     */
+    public void Control()
+    {
+        MovePos();// 座標移動
+        CheckHit();// 弾に当たったかを確認
+    }
+
+    /**
+     * @brief 座標を移動する
+     */
+    private void MovePos()
+    {
+        // プレイヤーが捕まれたとき
+        if (isCaught)
+        {
+            playerPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);// マウスの位置を取得
+            playerPos = Camera.main.ScreenToWorldPoint(playerPos);// スクリーン座標をワールド座標に変換
+            playerPos.z = 0f;// カメラのz座標が-10のため、プレイヤーのz座標を0にする
+
+            // x座標で動ける範囲外(最大値より大きい)のとき
+            if (MAX_POS_X < playerPos.x)
+            {
+                playerPos.x = MAX_POS_X;// ステージ内に収める
+            }
+            // x座標で動ける範囲外(最小値より小さい)のとき
+            else if (playerPos.x < MIN_POS_X)
+            {
+                playerPos.x = MIN_POS_X;// ステージ内に収める
+            }
+            // y座標で動ける範囲外(最大値より大きい)のとき
+            if (MAX_POS_Y < playerPos.y)
+            {
+                playerPos.y = MAX_POS_Y;// ステージ内に収める
+            }
+            // y座標で動ける範囲外(最小値より小さい)のとき
+            else if (playerPos.y < MIN_POS_Y)
+            {
+                playerPos.y = MIN_POS_Y;// ステージ内に収める
+            }
+            transform.position = playerPos;// ゲーム画面に反映
+        }
+    }
+
+    private void CheckHit()
+    {
+        // 弾に当たったとき
+        if (isHit)
+        {
+            // ヒットのアニメーションが開始されていないとき
+            if (!startedHitAnim)
+            {
+                startedHitAnim = StartedHitAnim();// 開始されているかを取得
+            }
+            // ヒットのアニメーションが開始されたとき
+            else
+            {
+                // ヒットのアニメーションの再生が終了したとき
+                if (FinishedHitAnim())
+                {
+                    GameSceneDirector.GetInstance().ChangeStatus(GameSceneDirector.GameStatus.GAME_OVER);// ゲームオーバー状態にする
+                }
+            }
+        }
+    }
+
+    /**
+     * @brief ヒットのアニメーションを再生したか
+     * @return true 再生開始
+     *         false 未再生
+     */
+    private bool StartedHitAnim()
+    {
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);// 現在のアニメーションの状態を取得する
+
+        // ヒットのアニメーションと同じハッシュ値のとき
+        if (Animator.StringToHash("Player.hit") == stateInfo.fullPathHash)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @brief ヒットのアニメーション再生が終了したか
+     * @return true 再生終了
+     *         false 再生中
+     */
+    private bool FinishedHitAnim()
+    {
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);// 現在のアニメーションの状態を取得する
+
+        // ヒットのアニメーションを再生し終えたとき
+        if (stateInfo.normalizedTime >= 1.0f)
+        {
+            return true;
+        }
+        return false;
     }
 }
