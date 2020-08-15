@@ -67,10 +67,11 @@
     <Compile Include="Assets\GameScene\Script\BulletManager.cs" />
     <Compile Include="Assets\GameScene\Script\GameSceneDirector.cs" />
     <Compile Include="Assets\GameScene\Script\MouseController.cs" />
+    <Compile Include="Assets\GameScene\Script\MouseManager.cs" />
     <Compile Include="Assets\GameScene\Script\PlayerController.cs" />
-    <Compile Include="Assets\GameScene\Script\ResultTimer.cs" />
-    <Compile Include="Assets\GameScene\Script\TimerController.cs" />
-    <Compile Include="Assets\GameScene\Script\TimerManager.cs" />
+    <Compile Include="Assets\GameScene\Script\ResultScore.cs" />
+    <Compile Include="Assets\GameScene\Script\ScoreController.cs" />
+    <Compile Include="Assets\GameScene\Script\ScoreManager.cs" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro_Properties.cginc" />

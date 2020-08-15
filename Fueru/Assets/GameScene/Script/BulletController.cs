@@ -43,6 +43,29 @@ public class BulletController : MonoBehaviour
     }
 
     /**
+     * @briref 1フレームごとに呼び出される関数
+     */
+    void Update()
+    {
+        // ステージ内のとき
+        if (OnStage())
+        {
+            MovePos();// 座標を移動
+            // プレイ状態から変化したとき
+            if (ChangedGameStatus())
+            {
+                DestroyImmediate(bulletObject);// ステージ内の弾を破棄
+            }
+        }
+        // ステージ外のとき
+        else
+        {
+            BulletManager.GetInstance().RemoveAddBulletPosList(startPos);// 弾の始点位置のリストから削除
+            DestroyImmediate(bulletObject);// ステージ外の弾を破棄
+        }
+    }
+
+    /**
      * @brief ランダム位置を取得する
      * @return ランダム位置
      */
@@ -107,7 +130,7 @@ public class BulletController : MonoBehaviour
             // ランダムで取得したx座標が右端を除いた位置のとき
             if (randomPosX != MAX_POS_X)
             {
-                int randomBoth = Random.Range(0, 1);// 両端のどちらかを決める
+                int randomBoth = Random.Range(0, 2);// 両端のどちらかを決める
                 if (randomBoth == 0)
                 {
                     randomPosY = MIN_POS_Y;// 下端にする
@@ -129,12 +152,12 @@ public class BulletController : MonoBehaviour
         // 始点の位置が右端のとき
         else if (startPos.x == MAX_POS_X)
         {
-            randomPosX = Random.Range(MIN_POS_X, centerX);// x座標をランダム取得(左半分)
+            randomPosX = Random.Range(MIN_POS_X, centerX + 1);// x座標をランダム取得(左半分)
 
             // ランダムで取得したx座標が左端を除いた位置のとき
             if (randomPosX != MAX_POS_X)
             {
-                int randomBoth = Random.Range(0, 1);// 両端のどちらかを決める
+                int randomBoth = Random.Range(0, 2);// 両端のどちらかを決める
                 if (randomBoth == 0)
                 {
                     randomPosY = MIN_POS_Y;// 下端にする
@@ -149,19 +172,19 @@ public class BulletController : MonoBehaviour
             {
                 do
                 {
-                    randomPosY = Random.Range(MIN_POS_Y, MAX_POS_Y);// y座標をランダム取得
+                    randomPosY = Random.Range(MIN_POS_Y, MAX_POS_Y + 1);// y座標をランダム取得
                 } while (Mathf.Abs(startPos.y - randomPosY) < 3f) ;// 始点のy座標と終点のy座標の差が3未満のとき
             }
         }
         // 始点の位置が下端のとき
         else if (startPos.y == MIN_POS_Y)
         {
-            randomPosY = Random.Range(centerY, MAX_POS_Y);// y座標をランダム取得(上半分)
+            randomPosY = Random.Range(centerY, MAX_POS_Y + 1);// y座標をランダム取得(上半分)
 
             // ランダムで取得したy座標が上端を除いた位置のとき
             if (randomPosY != MAX_POS_Y)
             {
-                int randomBoth = Random.Range(0, 1);// 両端のどちらかを決める
+                int randomBoth = Random.Range(0, 2);// 両端のどちらかを決める
                 if (randomBoth == 0)
                 {
                     randomPosX = MIN_POS_X;// 左端にする
@@ -176,19 +199,19 @@ public class BulletController : MonoBehaviour
             {
                 do
                 {
-                    randomPosX = Random.Range(MIN_POS_X, MAX_POS_X);// x座標をランダム取得
+                    randomPosX = Random.Range(MIN_POS_X, MAX_POS_X + 1);// x座標をランダム取得
                 } while (Mathf.Abs(startPos.x - randomPosX) < 3f);// 始点のx座標と終点のx座標の差が3未満のとき
             }
         }
         // 始点の位置が上端のとき
         else if (startPos.y == MAX_POS_Y)
         {
-            randomPosY = Random.Range(MIN_POS_Y, centerY);// y座標をランダム取得(下半分)
+            randomPosY = Random.Range(MIN_POS_Y, centerY + 1);// y座標をランダム取得(下半分)
 
             // ランダムで取得したy座標が下端を除いた位置のとき
             if (randomPosY != MIN_POS_Y)
             {
-                int randomBoth = Random.Range(0, 1);// 両端のどちらかを決める
+                int randomBoth = Random.Range(0, 2);// 両端のどちらかを決める
                 if (randomBoth == 0)
                 {
                     randomPosX = MIN_POS_X;// 左端にする
@@ -211,34 +234,11 @@ public class BulletController : MonoBehaviour
     }
 
     /**
-     * @briref 1フレームごとに呼び出される関数
-     */
-    void Update()
-    {
-        // ステージ内のとき
-        if (OnStage())
-        {
-            MovePos();// 座標を移動
-            // プレイ状態から変化したとき
-            if (ChangedGameStatus())
-            {
-                Destroy(bulletObject);// ステージ内の弾を破棄
-            }
-        }
-        // ステージ外のとき
-        else
-        {
-            BulletManager.GetInstance().RemoveAddBulletPosList(startPos);// 弾の始点位置のリストから削除
-            Destroy(bulletObject);// ステージ外の弾を破棄
-        }
-    }
-
-    /**
      * @brief 座標を移動する
      */
     private void MovePos()
     {
-        bulletObject.GetComponent<Rigidbody2D>().velocity = shotForward * MOVE_SPEED;
+        bulletObject.GetComponent<Rigidbody2D>().velocity = shotForward * MOVE_SPEED;// 始点位置から終点位置に向かって移動
     }
 
     /**

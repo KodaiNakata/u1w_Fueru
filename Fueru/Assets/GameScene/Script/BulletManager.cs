@@ -9,11 +9,13 @@ using UnityEngine;
  */
 
 /**
- * @class BulletGenerator
+ * @class BulletManager
  * @brief 弾の管理用のクラス
  */
 public class BulletManager : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject bulletPrefab = default;
     //! 自クラスのインスタンス
     private static BulletManager instance;
     //! タイマーの区間
@@ -23,14 +25,27 @@ public class BulletManager : MonoBehaviour
     //! 弾の始点位置のリスト
     private List<Vector2> bulletStartPosList;
     //! 弾のPrefabのオブジェクト
-    [SerializeField]
-    private GameObject bulletPrefab = default;
+    //! タイマーの区間の最小値
+    private const float MIN_TIMER_SPAN = 0.05f;
+    //! 弾の追加の間隔
+    private const int ADD_BULLET_SPAN = 10;
+    //! 追加回数
+    private int addCount;
     /**
      * @brief 最初のフレームに入る前に呼び出される関数
      */
     void Start()
     {
         instance = GetComponent<BulletManager>();
+        bulletStartPosList = new List<Vector2>();
+    }
+
+    /**
+     * @brief オブジェクトを有効にした直後に呼び出される関数
+     */
+    void OnEnable()
+    {
+        addCount = 1;
         bulletStartPosList = new List<Vector2>();
     }
 
@@ -46,14 +61,12 @@ public class BulletManager : MonoBehaviour
             CreateBullet();// 弾を生成する
             timeCount = 0f;// タイマーをリセットする
         }
-    }
-
-    /**
-     * @brief 弾を生成する
-     */
-    private void CreateBullet()
-    {
-        GameObject gameObject = Instantiate(bulletPrefab) as GameObject;
+        // スコアが30の倍数になったとき
+        if (ScoreManager.GetInstance().GetScore() == ADD_BULLET_SPAN * addCount)
+        {
+            addCount++;// 追加をカウント
+            ShortenTimeSpan();// タイム区間を短くする
+        }
     }
 
     /**
@@ -63,6 +76,14 @@ public class BulletManager : MonoBehaviour
     public static BulletManager GetInstance()
     {
         return instance;
+    }
+
+    /**
+     * @brief 初期化する
+     */
+    public void Init()
+    {
+        addCount = 1;
     }
 
     /**
@@ -97,13 +118,15 @@ public class BulletManager : MonoBehaviour
         int rightPosCount = 0;
         foreach(Vector2 vector2 in bulletStartPosList)
         {
+            // 左半分の位置のとき
             if (vector2.x <= centerX)
             {
-                leftPosCount++;
+                leftPosCount++;// 左半分としてカウント
             }
+            // 右半分の位置のとき
             else
             {
-                rightPosCount++;
+                rightPosCount++;// 右半分としてカウント
             }
         }
         // 始点位置が右のほうが多いとき
@@ -131,13 +154,15 @@ public class BulletManager : MonoBehaviour
         int bottomPosCount = 0;
         foreach (Vector2 vector2 in bulletStartPosList)
         {
+            // 下半分の位置のとき
             if (vector2.y <= centerY)
             {
-                bottomPosCount++;
+                bottomPosCount++;// 下半分としてカウント
             }
+            // 上半分の位置のとき
             else
             {
-                topPosCount++;
+                topPosCount++;// 上半分としてカウント
             }
         }
         // 始点位置が上のほうが多いとき
@@ -149,6 +174,27 @@ public class BulletManager : MonoBehaviour
         else
         {
             return maxPosY;// 上端を始点位置とする
+        }
+    }
+
+    /**
+     * @brief 弾を生成する
+     */
+    private void CreateBullet()
+    {
+        GameObject gameObject = Instantiate(bulletPrefab) as GameObject;
+    }
+
+    /**
+     * @brief タイム区間を短くする
+     */
+    private void ShortenTimeSpan()
+    {
+        timeSpan -= 0.1f;
+        // 最小のタイム区間より短いとき
+        if (timeSpan < MIN_TIMER_SPAN)
+        {
+            timeSpan = MIN_TIMER_SPAN;
         }
     }
 }
