@@ -20,9 +20,9 @@ public class BulletController : MonoBehaviour
     //! 移動の速さ
     private const float MOVE_SPEED = 1f;
     //! x座標の最小値
-    private const int MIN_POS_X = -2;
+    private const int MIN_POS_X = 2;
     //! x座標の最大値
-    private const int MAX_POS_X = 22;
+    private const int MAX_POS_X = 19;
     //! y座標の最小値
     private const int MIN_POS_Y = -1;
     //! y座標の最大値
