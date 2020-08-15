@@ -52,6 +52,7 @@ public class PlayerController : MonoBehaviour
         isCaught = false;
         isHit = false;
         startedHitAnim = false;
+        transform.position = playerPos;
     }
 
     /**
