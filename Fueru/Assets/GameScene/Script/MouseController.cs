@@ -20,6 +20,7 @@ public class MouseController : MonoBehaviour
     void Update()
     {
         GameSceneDirector.GameStatus status = GameSceneDirector.GetInstance().GetCurrentStatus();
+
         // スタート状態のとき
         if (status == GameSceneDirector.GameStatus.START)
         {
@@ -28,7 +29,7 @@ public class MouseController : MonoBehaviour
         // プレイ状態のとき
         else if (status == GameSceneDirector.GameStatus.PLAY)
         {
-            PlayerController.GetInstance().MovePos();// プレイヤーを操作する
+            PlayerController.GetInstance().Control();// プレイヤーを操作する
         }
         // ゲームオーバー状態のとき
         else
@@ -55,7 +56,7 @@ public class MouseController : MonoBehaviour
     private void ControlGameOverScene()
     {
         // 左クリックしたとき
-        if (Input.GetMouseButtonDown(0))
+        if (MouseManager.GetInstance().GetControl() && Input.GetMouseButtonDown(0))
         {
             GameSceneDirector.GetInstance().ChangeStatus(GameSceneDirector.GameStatus.START);// スタート状態へ遷移する
         }

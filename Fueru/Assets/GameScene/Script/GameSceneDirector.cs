@@ -26,6 +26,7 @@ public class GameSceneDirector : MonoBehaviour
         //! ゲームオーバー
         GAME_OVER
     }
+
     //! ゲームオブジェクト
     [SerializeField]
     private GameObject[] gameObjects = default;
@@ -33,6 +34,7 @@ public class GameSceneDirector : MonoBehaviour
     private GameStatus currentStatus;
     //! 自クラスのインスタンス
     private static GameSceneDirector instance;
+
     /**
      * @brief Start関数の前およびプレハブのインスタンス化直後に呼び出される関数
      */
@@ -89,7 +91,7 @@ public class GameSceneDirector : MonoBehaviour
     }
 
     /**
-     * @brief スタート状態をアクティブに設定する
+     * @brief スタート状態をアクティブにするか設定する
      * @param[in] isActive アクティブにするか
      */
     private void SetActiveStatusOfStart(bool isActive)
@@ -102,18 +104,19 @@ public class GameSceneDirector : MonoBehaviour
                 gameObject.SetActive(isActive);// アクティブにするか設定する
             }
         }
+        MouseManager.GetInstance().SetControl(true);
     }
 
     /**
-     * @brief プレイ状態をアクティブに設定する
+     * @brief プレイ状態をアクティブにするか設定する
      * @param[in] isActive アクティブにするか
      */
     private void SetActiveStatusOfPlay(bool isActive)
     {
         foreach (GameObject gameObject in gameObjects)
         {
-            // プレイヤーまたは弾の管理またはタイマーのオブジェクトのとき
-            if (gameObject.name.Equals("Player") || gameObject.name.Equals("BulletManager") || gameObject.name.Equals("Timer"))
+            // プレイヤーまたは弾の管理またはスコアのオブジェクトのとき
+            if (gameObject.name.Equals("Player") || gameObject.name.Equals("BulletManager") || gameObject.name.Equals("Score"))
             {
                 gameObject.SetActive(isActive);// アクティブにするか設定する
             }
@@ -121,18 +124,19 @@ public class GameSceneDirector : MonoBehaviour
     }
 
     /**
-     * @brief ゲームオーバー状態をアクティブに設定する
+     * @brief ゲームオーバー状態をアクティブにするか設定する
      * @param[in] isActive アクティブにするか
      */
     private void SetActiveStatusOfGameOver(bool isActive)
     {
         foreach (GameObject gameObject in gameObjects)
         {
-            // ゲームオーバーまたは結果のオブジェクトのとき
-            if (gameObject.name.Equals("GameOver") || gameObject.name.Equals("Result"))
+            // ゲームオーバーまたは結果または戻るのオブジェクトのとき
+            if (gameObject.name.Equals("GameOver") || gameObject.name.Equals("Result") || gameObject.name.Equals("Return"))
             {
                 gameObject.SetActive(isActive);// アクティブにするか設定する
             }
         }
+        MouseManager.GetInstance().SetControl(false);// スコアのカウントアップのアニメーションが終了するまで操作不可能にする
     }
 }
