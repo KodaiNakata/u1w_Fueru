@@ -19,9 +19,9 @@ public class BulletManager : MonoBehaviour
     //! 自クラスのインスタンス
     private static BulletManager instance;
     //! タイマーの区間
-    private float timeSpan = 1f;
+    private float timeSpan;
     //! カウント用のタイマー
-    private float timeCount = 0f;
+    private float timeCount;
     //! 弾の始点位置のリスト
     private List<Vector2> bulletStartPosList;
     //! 弾のPrefabのオブジェクト
@@ -46,6 +46,8 @@ public class BulletManager : MonoBehaviour
     void OnEnable()
     {
         addCount = 1;
+        timeSpan = 1f;
+        timeCount = 0f;
         bulletStartPosList = new List<Vector2>();
     }
 
