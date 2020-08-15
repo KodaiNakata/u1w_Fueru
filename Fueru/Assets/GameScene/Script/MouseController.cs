@@ -58,6 +58,9 @@ public class MouseController : MonoBehaviour
         // 左クリックしたとき
         if (MouseManager.GetInstance().GetControl() && Input.GetMouseButtonDown(0))
         {
+            GameObject returnObject = GameObject.Find("Return");// 戻るオブジェクトを取得
+            Animator returnAnim = returnObject.GetComponent<Animator>();// 戻るのアニメーションを取得
+            returnAnim.SetBool("flash", false);// 透明アニメーションへ移行
             GameSceneDirector.GetInstance().ChangeStatus(GameSceneDirector.GameStatus.START);// スタート状態へ遷移する
         }
     }
