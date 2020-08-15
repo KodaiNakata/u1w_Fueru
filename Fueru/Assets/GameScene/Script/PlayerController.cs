@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
      */
     void OnEnable()
     {
-        playerPos = default;
+        playerPos = new Vector2(10f, 5f);
         isCaught = false;
         isHit = false;
         startedHitAnim = false;
