@@ -25,6 +25,7 @@ public class ResultScore : MonoBehaviour
         int nowScore = 0;
         int score = ScoreManager.GetInstance().GetScore();// スコア管理から取得する
         GameObject returnObject = GameObject.Find("Return");// 戻るオブジェクトを取得
+        returnObject.GetComponent<TextMeshProUGUI>().color = new Color(255f, 255f, 255f, 0f);// 透明にする
         Animator returnAnim = returnObject.GetComponent<Animator>();// 戻るのアニメーションを取得
         Sequence sequence = DOTween.Sequence();
         sequence
